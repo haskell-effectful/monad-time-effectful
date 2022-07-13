@@ -2,10 +2,10 @@ cabal-version:      3.0
 name:               effectful-time
 version:            0.0.1.0
 homepage:
-  https://github.com/haskell-effectful/effectful-contrib/tree/main/effectful-time#readme
+  https://github.com/haskell-effectful/effectful-time#readme
 
 bug-reports:
-  https://github.com/haskell-effectful/effectful-contrib/issues
+  https://github.com/haskell-effectful/effectful-time/issues
 
 author:             Hécate Moonlight
 maintainer:         Hécate Moonlight
@@ -18,7 +18,7 @@ extra-source-files:
 
 source-repository head
   type:     git
-  location: https://github.com/haskell-effectful/effectful-contrib
+  location: https://github.com/haskell-effectful/effectful-time
 
 common common-extensions
   default-extensions:
@@ -51,8 +51,8 @@ common common-ghc-options
   ghc-options:
     -Wall -Wcompat -Werror -Widentities -Wincomplete-record-updates
     -Wincomplete-uni-patterns -Wpartial-fields -Wredundant-constraints
-    -fhide-source-paths -Wno-unused-do-bind -fwrite-ide-info
-    -hiedir=.hie -haddock -j
+    -fhide-source-paths -Wno-unused-do-bind
+    -j
 
 common common-rts-options
   ghc-options: -rtsopts -threaded -with-rtsopts=-N
@@ -64,7 +64,7 @@ library
   exposed-modules: Effectful.Time
   build-depends:
     , base            <=4.17
-    , effectful-core
+    , effectful-core ^>=1.0
     , time
 
 test-suite effectful-time-test
