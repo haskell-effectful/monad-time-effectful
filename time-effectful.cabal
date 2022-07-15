@@ -1,11 +1,11 @@
 cabal-version:      3.0
-name:               effectful-time
+name:               time-effectful
 version:            0.0.1.0
 homepage:
-  https://github.com/haskell-effectful/effectful-time#readme
+  https://github.com/haskell-effectful/time-effectful#readme
 
 bug-reports:
-  https://github.com/haskell-effectful/effectful-time/issues
+  https://github.com/haskell-effectful/time-effectful/issues
 
 author:             Hécate Moonlight
 maintainer:         Hécate Moonlight
@@ -18,7 +18,7 @@ extra-source-files:
 
 source-repository head
   type:     git
-  location: https://github.com/haskell-effectful/effectful-time
+  location: https://github.com/haskell-effectful/time-effectful
 
 common common-extensions
   default-extensions:
@@ -67,7 +67,7 @@ library
     , effectful-core ^>=1.0
     , time
 
-test-suite effectful-time-test
+test-suite time-effectful-test
   import:         common-extensions
   import:         common-ghc-options
   import:         common-rts-options
@@ -78,7 +78,7 @@ test-suite effectful-time-test
   build-depends:
     , base
     , effectful-core
-    , effectful-time
+    , time-effectful
     , tasty
     , tasty-hunit
     , time

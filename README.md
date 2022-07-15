@@ -1,4 +1,4 @@
-# effectful-time 
+# time-effectful 
 
 ## Description
 
@@ -39,4 +39,4 @@ runCurrentTimePure (time :: UTCTime) usingTime
 See the [tests][tests] to see an example use.
 
 [effectful]: https://github.com/haskell-effectful/effectful
-[tests]: https://github.com/Kleidukos/effectful-contrib/blob/main/effectful-time/test/Main.hs
+[tests]: https://github.com/Kleidukos/effectful-contrib/blob/main/time-effectful/test/Main.hs

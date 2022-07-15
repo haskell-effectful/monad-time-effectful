@@ -10,7 +10,7 @@ import Effectful.Time
 import Effectful.State.Static.Local
 
 main :: IO ()
-main = defaultMain $ testGroup "effectful-time"
+main = defaultMain $ testGroup "time-effectful"
   [ testCase "IO Time handler & State" $ testIOTimeAndState =<< T.getCurrentTime
   , testCase "Pure Time handler & State" testPureTimeAndState
   ]
