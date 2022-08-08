@@ -64,7 +64,7 @@ library
   exposed-modules: Effectful.Time
   build-depends:
     , base            <=4.17
-    , effectful-core ^>=1.0
+    , effectful-core  >=1.0 && <1.3
     , time
 
 test-suite time-effectful-test
