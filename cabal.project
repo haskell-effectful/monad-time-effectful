@@ -1,4 +1,4 @@
 packages: ./
 
 package time-effectful
-  ghc-optons: -Werror -Wall
+  ghc-options: -Werror -Wall
