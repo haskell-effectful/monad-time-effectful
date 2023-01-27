@@ -13,6 +13,7 @@ test: ## Run the test suite
 lint: ## Run the code linter (HLint)
 	@find test src -name "*.hs" | xargs -P 12 -I {} hlint --refactor-options="-i" --refactor {}
 	@cabal-fmt -i *.cabal
+	@find test src -name '*.hs' -exec fourmolu -i {} +
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.* ?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
