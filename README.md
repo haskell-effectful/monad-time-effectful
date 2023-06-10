@@ -1,42 +1,10 @@
-# time-effectful 
+# monad-time-effectful
 
-## Description
+[![Build Status](https://github.com/haskell-effectful/monad-time-effectful/workflows/Haskell-CI/badge.svg?branch=master)](https://github.com/haskell-effectful/monad-time-effectful/actions?query=branch%3Amaster)
+[![Hackage](https://img.shields.io/hackage/v/monad-time-effectful.svg)](https://hackage.haskell.org/package/monad-time-effectful)
+[![Dependencies](https://img.shields.io/hackage-deps/v/monad-time-effectful.svg)](https://packdeps.haskellers.com/feed?needle=andrzej@rybczak.net)
+[![Stackage LTS](https://www.stackage.org/package/monad-time-effectful/badge/lts)](https://www.stackage.org/lts/package/monad-time-effectful)
+[![Stackage Nightly](https://www.stackage.org/package/monad-time-effectful/badge/nightly)](https://www.stackage.org/nightly/package/monad-time-effectful)
 
-A `Time` effect for the [`effectful`][effectful] ecosystem.
 
-## How to use
-
-This library exposes the following elements:
-
-* `Time` — The type-level effect that you can declare in your type signatures.
-
-example: 
-```haskell
-processTime :: (Time :> es) => Eff es UTCTime
-```
-
-* `getCurrentTime` — The function that you will call to get a `Eff es UTCTime`.
-
-```haskell
-import qualified Data.Time as T
-
-import Effectful.Time 
-
-usingTime :: (Time :> es) => Eff es UTCTime
-usingTime = do
-  t <- getCurrentTime
-  pure $ T.addUTCTime 100 t
-```
-
-* Runners for IO & Pure environments:
-
-```Haskell
-runCurrentTimeIO usingTime
--- or
-runCurrentTimePure (time :: UTCTime) usingTime
-```
-
-See the [tests][tests] to see an example use.
-
-[effectful]: https://github.com/haskell-effectful/effectful
-[tests]: https://github.com/Kleidukos/effectful-contrib/blob/main/time-effectful/test/Main.hs
+Adaptation of the [monad-time](https://hackage.haskell.org/package/monad-time) library for the [effectful](https://hackage.haskell.org/package/effectful) ecosystem.

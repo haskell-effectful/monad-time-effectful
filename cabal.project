@@ -1,4 +1,1 @@
-packages: ./
-
-package time-effectful
-  ghc-options: -Werror -Wall
+packages: .
