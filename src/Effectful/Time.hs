@@ -1,60 +1,48 @@
-{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE UndecidableInstances #-}
+{-# OPTIONS_GHC -Wno-orphans #-}
 
-{-|
-  Module      : Effectful.Time
-  Copyright   : © Hécate Moonlight, 2021
-  License     : MIT
-  Maintainer  : hecate@glitchbra.in
-  Stability   : stable
-
-  An effect wrapper around Data.Time for the Effectful ecosystem
--}
+-- | Time measurement via 'MonadTime'.
 module Effectful.Time
-  ( -- * Time Effect
+  ( -- * Effect
     Time (..)
-  , UTCTime
-  , getCurrentTime
+  , MonadTime (..)
 
-    -- * Runners
-  , runCurrentTimeIO
-  , runCurrentTimePure
+    -- ** Handlers
+  , runTime
+  , runFrozenTime
   ) where
 
 import Control.Monad.IO.Class
-import Data.Kind
-import Data.Time (UTCTime)
-import qualified Data.Time as T
+import Control.Monad.Time
+import Data.Time
 import Effectful
 import Effectful.Dispatch.Dynamic
+import GHC.Clock (getMonotonicTime)
 
--- | An effect for getting the current time
+-- | Provide the ability to use the 'MonadTime' instance of 'Eff'.
 data Time :: Effect where
   CurrentTime :: Time m UTCTime
+  MonotonicTime :: Time m Double
 
-{-|
-@since 0.0.1.0
--}
-type instance DispatchOf Time = 'Dynamic
+type instance DispatchOf Time = Dynamic
 
--- | Retrieve the current time in your effect stack
-getCurrentTime
-  :: forall (es :: [Effect])
-   . Time :> es
-  => Eff es UTCTime
-getCurrentTime = send CurrentTime
+-- | Run a 'Time' effect via 'IO'.
+runTime :: IOE :> es => Eff (Time : es) a -> Eff es a
+runTime = interpret $ \_ -> \case
+  CurrentTime -> liftIO getCurrentTime
+  MonotonicTime -> liftIO getMonotonicTime
 
--- | The default IO handler
-runCurrentTimeIO
-  :: forall (es :: [Effect]) (a :: Type)
-   . IOE :> es
-  => Eff (Time : es) a
-  -> Eff es a
-runCurrentTimeIO = interpret $ \_ CurrentTime -> liftIO T.getCurrentTime
+-- | Run a 'Time' effect with a frozen value of the 'CurrentTime' operation.
+--
+-- /Note:/ the 'MonotonicTime' operation works the same way as in 'runTime'.
+runFrozenTime :: IOE :> es => UTCTime -> Eff (Time : es) a -> Eff es a
+runFrozenTime time = interpret $ \_ -> \case
+  CurrentTime -> pure time
+  MonotonicTime -> liftIO getMonotonicTime
 
--- | The pure handler, with a static value
-runCurrentTimePure
-  :: forall (es :: [Effect]) (a :: Type)
-   . UTCTime
-  -> Eff (Time : es) a
-  -> Eff es a
-runCurrentTimePure time = interpret $ \_ CurrentTime -> pure time
+----------------------------------------
+-- Orphan instance
+
+instance Time :> es => MonadTime (Eff es) where
+  currentTime = send CurrentTime
+  monotonicTime = send MonotonicTime
