@@ -1,3 +1,4 @@
+{-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE UndecidableInstances #-}
 {-# OPTIONS_GHC -Wno-orphans #-}
 
@@ -10,13 +11,16 @@ module Effectful.Time
     -- ** Handlers
   , runTime
   , runFrozenTime
+  , runFixedStepTime
   ) where
 
 import Control.Monad.IO.Class
 import Control.Monad.Time
 import Data.Time
+import Data.Time.Clock.POSIX
 import Effectful
 import Effectful.Dispatch.Dynamic
+import Effectful.State.Static.Local
 import GHC.Clock (getMonotonicTime)
 
 -- | Provide the ability to use the 'MonadTime' instance of 'Eff'.
@@ -39,6 +43,21 @@ runFrozenTime :: IOE :> es => UTCTime -> Eff (Time : es) a -> Eff es a
 runFrozenTime time = interpret $ \_ -> \case
   CurrentTime -> pure time
   MonotonicTime -> liftIO getMonotonicTime
+
+-- | Run the 'Time' effect with a given starting time and fixed
+-- increment for every invocation of the 'CurrentTime' operation.
+runFixedStepTime :: UTCTime -> NominalDiffTime -> Eff (Time : es) a -> Eff es a
+runFixedStepTime start diff =
+  let f :: Eff (State UTCTime : es') UTCTime
+      f = do
+        current <- get @UTCTime
+        modify (addUTCTime diff)
+        pure current
+      g :: UTCTime -> Double
+      g = fromRational . toRational . nominalDiffTimeToSeconds . utcTimeToPOSIXSeconds
+  in  reinterpret (evalState start) $ \_ -> \case
+        CurrentTime -> f
+        MonotonicTime -> g <$> f
 
 ----------------------------------------
 -- Orphan instance
