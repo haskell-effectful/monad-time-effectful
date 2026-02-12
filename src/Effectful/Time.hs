@@ -51,8 +51,7 @@ runFrozenTime time = interpret $ \_ -> \case
 runFixedStepTime :: IOE :> es => UTCTime -> NominalDiffTime -> Eff (Time : es) a -> Eff es a
 runFixedStepTime start diff =
   reinterpret_ (evalState start) $ \case
-    CurrentTime -> do
-      state $ \s -> (s, diff `addUTCTime` s)
+    CurrentTime -> state $ \s -> (s, diff `addUTCTime` s)
     MonotonicTime -> liftIO getMonotonicTime
 
 ----------------------------------------
