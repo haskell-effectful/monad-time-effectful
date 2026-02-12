@@ -39,7 +39,9 @@ runTime = interpret $ \_ -> \case
 --
 -- /Note:/ the 'MonotonicTime' operation works the same way as in 'runTime'.
 runFrozenTime :: IOE :> es => UTCTime -> Eff (Time : es) a -> Eff es a
-runFrozenTime time = runFixedStepTime time 0
+runFrozenTime time = interpret $ \_ -> \case
+  CurrentTime -> pure time
+  MonotonicTime -> liftIO getMonotonicTime
 
 -- | Run the 'Time' effect with a given starting time and fixed
 -- increment for every invocation of the 'CurrentTime' operation.
@@ -47,13 +49,9 @@ runFrozenTime time = runFixedStepTime time 0
 -- /Note:/ the 'MonotonicTime' operation works the same way as in 'runTime'.
 runFixedStepTime :: IOE :> es => UTCTime -> NominalDiffTime -> Eff (Time : es) a -> Eff es a
 runFixedStepTime start diff =
-  let f :: Eff (State UTCTime : es') UTCTime
-      f = do
-        current <- get @UTCTime
-        modify (addUTCTime diff)
-        pure current
-  in  reinterpret_ (evalState start) $ \case
-        CurrentTime -> f
+    reinterpret_ (evalState start) $ \case
+        CurrentTime -> do
+          state $ \s -> (s, diff `addUTCTime` s)
         MonotonicTime -> liftIO getMonotonicTime
 
 ----------------------------------------
