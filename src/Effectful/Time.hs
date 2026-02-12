@@ -43,10 +43,12 @@ runFrozenTime time = interpret $ \_ -> \case
   CurrentTime -> pure time
   MonotonicTime -> liftIO getMonotonicTime
 
--- | Run the 'Time' effect with a given starting time and fixed
--- increment for every invocation of the 'CurrentTime' operation.
+-- | Run the 'Time' effect with a given starting time; time advances
+-- by a fixed increment for every invocation of the 'CurrentTime'
+-- operation. A negative increment will make the clock run backwards.
 --
--- /Note:/ the 'MonotonicTime' operation works the same way as in 'runTime'.
+-- /Note:/ the 'MonotonicTime' operation works the same way as in
+-- 'runTime'.
 runFixedStepTime :: IOE :> es => UTCTime -> NominalDiffTime -> Eff (Time : es) a -> Eff es a
 runFixedStepTime start diff =
     reinterpret_ (evalState start) $ \case
